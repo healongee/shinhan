@@ -1,13 +1,17 @@
 import './App.css';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import LessorList from './LessorList';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import TenentList from './TenentList';
+import HouseInfo from './HouseInfo';
 
 function Login(props) {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   
   return <>
-    <h2>로그인</h2>
+    <h2>신한 부동산 관리 프로그램 로그인</h2>
 
     <div className="form">
       <p><input className="login" type="text" name="username" placeholder="아이디" onChange={event => {
@@ -46,7 +50,6 @@ function Login(props) {
     }}>회원가입</button></p>
   </> 
 }
-
 
 function Signin(props) {
   const [id, setId] = useState("");
@@ -101,6 +104,7 @@ function Signin(props) {
 
 function App() {
   const [mode, setMode] = useState("");
+  const [menu, setMenu] = useState("LessorList");
 
   useEffect(() => {
     fetch("http://localhost:3001/authcheck")
@@ -108,36 +112,150 @@ function App() {
       .then((json) => {        
         if (json.isLogin === "True") {
           setMode("WELCOME");
-        }
-        else {
+        } else {
           setMode("LOGIN");
         }
       });
   }, []); 
 
+  function handleLogout() {
+    fetch('/logout', {
+        method: 'GET',
+        credentials: 'include', // 세션 쿠키를 포함
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '/'; // 홈 페이지로 리다이렉트
+        } else {
+            alert('Logout failed: ' + data.message);
+        }
+    })
+    .catch(err => console.error('Logout error:', err));
+}
+  
+
+  const renderContent = () => {
+    if (menu === "LessorList") {
+      return <LessorList />;
+    }
+    if (menu === "TenentList") {
+      return <TenentList />;
+    }
+    if (menu === "HouseInfo") {
+      return <HouseInfo />;
+    }
+    return <div>준비 중입니다...</div>;
+  };
+
   let content = null;  
 
-  if(mode==="LOGIN"){
-    content = <Login setMode={setMode}></Login> 
-  }
-  else if (mode === 'SIGNIN') {
-    content = <Signin setMode={setMode}></Signin> 
-  }
-  else if (mode === 'WELCOME') {
-    content = <>
-    <h2>메인 페이지에 오신 것을 환영합니다</h2>
-    <p>로그인에 성공하셨습니다.</p> 
-    <a href="/logout">로그아웃</a>   
-    </>
+  if (mode === "LOGIN") {
+    content = <Login setMode={setMode} />;
+  } else if (mode === "SIGNIN") {
+    content = <Signin setMode={setMode} />;
+  } else if (mode === "WELCOME") {
+    content = (
+      <>
+        <div className="App">
+          <div className="navbar">
+            <ul>
+              <li onClick={() => setMenu("LessorList")}>임대인정보</li>
+              <li onClick={() => setMenu("TenentList")}>임차인정보</li>
+              <li onClick={() => setMenu("HouseInfo")}>주택정보</li>
+              <li>임대차계약</li>
+              <li>임대료청구</li>
+              <li>이주정산</li>
+              <li>금전출납</li>
+              <li>시스템</li>
+              <li onClick={handleLogout}>로그아웃</li>
+            </ul>
+          </div>
+          <div className="content">
+            {renderContent()}
+          </div>
+        </div>
+      </>
+    );
   }
 
   return (
-    <>
-      <div className="background">
-        {content}
-      </div>
-    </>
+    <div className="background">
+      {content}
+    </div>
   );
 }
 
+
+
+
 export default App;
+
+
+// function App() {
+//   const [mode, setMode] = useState("");
+//   const [menu, setMenu] = useState("LessorList");
+
+//   useEffect(() => {
+//     fetch("http://localhost:3001/authcheck")
+//       .then((res) => res.json())
+//       .then((json) => {        
+//         if (json.isLogin === "True") {
+//           setMode("WELCOME");
+//         } else {
+//           setMode("LOGIN");
+//         }
+//       });
+//   }, []); 
+
+//   const renderContent = () => {
+//     if (menu === "LessorList") {
+//       return <LessorList />;
+//     }
+//     if (menu === "TenentList") {
+//       return <TenentList />;
+//     }
+//     if (menu === "HouseInfo") {
+//       return <HouseInfo />;
+//     }
+//     return <div>준비 중입니다...</div>;
+//   };
+
+//   let content = null;  
+
+//   if (mode === "LOGIN") {
+//     content = <Login setMode={setMode} />;
+//   } else if (mode === "SIGNIN") {
+//     content = <Signin setMode={setMode} />;
+//   } else if (mode === "WELCOME") {
+//     content = <>
+//       {/* <h2>신한 부동산 관리 프로그램 입니다.</h2> */}
+//       <div className="App">
+//         <div className="navbar">
+//           <ul>
+//             <li onClick={() => setMenu("LessorList")}>임대인정보</li>
+//             <li onClick={() => setMenu("TenentList")}>임차인정보</li>
+//             <li onClick={() => setMenu("HouseInfo")}>주택정보</li>
+//             <li>임대차계약</li>
+//             <li>임대료청구</li>
+//             <li>이주정산</li>
+//             <li>금전출납</li>
+//             <li>시스템</li>
+//           </ul>
+//           <a href="/logout" className="logout-link">로그아웃</a>
+//         </div>
+//         <div className="content">
+//           {renderContent()}
+//         </div>
+//       </div>
+//     </>;
+//   }
+
+//   return (
+//     <div className="background">
+//       {content}
+//     </div>
+//   );
+// }
+
+// export default App;

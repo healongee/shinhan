@@ -37,12 +37,6 @@ app.get('/authcheck', (req, res) => {
     res.send(sendData);
 })
 
-app.get('/logout', function (req, res) {
-    req.session.destroy(function (err) {
-        res.redirect('/');
-    });
-});
-
 app.post("/login", (req, res) => { // 데이터 받아서 결과 전송
     const username = req.body.userId;
     const password = req.body.userPassword;
@@ -116,7 +110,238 @@ app.post("/signin", (req, res) => {  // 데이터 받아서 결과 전송
     
 });
 
+app.post("/searchLessor", (req, res) => {
+    const { name, ssn, mobile } = req.body; // 클라이언트에서 보낸 데이터 추출
+
+    // 기본 SQL 쿼리
+    let sqlQuery = "SELECT * FROM lessor WHERE 1=1";
+    const queryParams = [];
+
+    // 조건에 따라 쿼리와 파라미터 동적 생성
+    if (name) {
+        sqlQuery += " AND NAME LIKE ?";
+        queryParams.push(`%${name}%`); // 부분 검색 가능하도록 설정
+    }
+    if (ssn) {
+        sqlQuery += " AND SSN LIKE ?";
+        queryParams.push(`%${ssn}%`); // 부분 검색 가능하도록 설정
+    }
+    if (mobile) {
+        sqlQuery += " AND MOBILE LIKE ?";
+        queryParams.push(`%${mobile}%`); // 부분 검색 가능하도록 설정
+    }
+
+    // 데이터베이스 쿼리 실행
+    db.query(sqlQuery, queryParams, (err, results) => {
+        if (err) {
+            console.error("Error searching lessor data:", err);
+            res.status(500).send("Error retrieving data from the database");
+        } else {
+            res.json(results); // 검색 결과 반환
+        }
+    });
+});
+
+app.get("/Lessorlist", (req, res) => {
+    const sqlQuery = `SELECT * FROM lessor`;
+    
+    db.query(sqlQuery, (err, results) => {
+        if (err) {
+            console.error("Error fetching lessor data:", err);
+            res.status(500).send("Error retrieving data from the database");
+        } else {
+            res.json(results); // 데이터를 JSON 형식으로 반환
+        }
+    });
+});
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
+
+app.post("/searchTenent", (req, res) => {
+    const { name, ssn, mobile } = req.body; // 클라이언트에서 보낸 데이터 추출
+
+    // 기본 SQL 쿼리
+    let sqlQuery = "SELECT * FROM tenent WHERE 1=1";
+    const queryParams = [];
+
+    // 조건에 따라 쿼리와 파라미터 동적 생성
+    if (name) {
+        sqlQuery += " AND NAME LIKE ?";
+        queryParams.push(`%${name}%`); // 부분 검색 가능하도록 설정
+    }
+    if (ssn) {
+        sqlQuery += " AND SSN LIKE ?";
+        queryParams.push(`%${ssn}%`); // 부분 검색 가능하도록 설정
+    }
+    if (mobile) {
+        sqlQuery += " AND MOBILE LIKE ?";
+        queryParams.push(`%${mobile}%`); // 부분 검색 가능하도록 설정
+    }
+
+    // 데이터베이스 쿼리 실행
+    db.query(sqlQuery, queryParams, (err, results) => {
+        if (err) {
+            console.error("Error searching lessor data:", err);
+            res.status(500).send("Error retrieving data from the database");
+        } else {
+            res.json(results); // 검색 결과 반환
+        }
+    });
+});
+
+app.get("/Tenentlist", (req, res) => {
+    const sqlQuery = `SELECT * FROM tenent`;
+    
+    db.query(sqlQuery, (err, results) => {
+        if (err) {
+            console.error("Error fetching tenent data:", err);
+            res.status(500).send("Error retrieving data from the database");
+        } else {
+            res.json(results); // 데이터를 JSON 형식으로 반환
+        }
+    });
+});
+
+// app.get("/HouseInfo", (req, res) => {
+//     const sqlQuery = `SELECT * FROM houseinfo`;
+    
+//     db.query(sqlQuery, (err, results) => {
+//         if (err) {
+//             console.error("Error fetching house data:", err);
+//             res.status(500).send("Error retrieving data from the database");
+//         } else {
+//             res.json(results); // 데이터를 JSON 형식으로 반환
+//         }
+//     });
+// });
+
+app.get("/HouseInfo", (req, res) => {
+    const sqlQuery = `
+        SELECT 
+            hi.*, 
+            l.name AS lessor_name
+        FROM 
+            houseinfo hi
+        LEFT JOIN 
+            lessor l 
+        ON 
+            hi.lessor_id = l.lessor_id;
+    `;
+    
+    db.query(sqlQuery, (err, results) => {
+        if (err) {
+            console.error("Error fetching house data:", err);
+            res.status(500).send("Error retrieving data from the database");
+        } else {
+            res.json(results); // 조인된 데이터를 JSON 형식으로 반환
+        }
+    });
+});
+
+
+// app.post("/searchHouse", (req, res) => {
+//     const { building_name, address, lot_number, lessor, management_status, billing_deadline } = req.body;
+
+//     let sqlQuery = "SELECT * FROM houseinfo WHERE 1=1";
+//     const queryParams = [];
+
+//     if (building_name) {
+//         sqlQuery += " AND building_name LIKE ?";
+//         queryParams.push(`%${building_name}%`);
+//     }
+//     if (address) {
+//         sqlQuery += " AND address LIKE ?";
+//         queryParams.push(`%${address}%`);
+//     }
+//     if (lot_number) {
+//         sqlQuery += " AND lot_number LIKE ?";
+//         queryParams.push(`%${lot_number}%`);
+//     }
+//     if (lessor) {
+//         sqlQuery += " AND lessor_id LIKE ?";
+//         queryParams.push(`%${lessor}%`);
+//     }
+//     if (management_status) {
+//         sqlQuery += " AND management_status = ?";
+//         queryParams.push(management_status);
+//     }
+//     if (billing_deadline) {
+//         sqlQuery += " AND billing_deadline = ?";
+//         queryParams.push(billing_deadline);
+//     }
+
+//     db.query(sqlQuery, queryParams, (err, results) => {
+//         if (err) {
+//             console.error("Error searching house data:", err);
+//             res.status(500).send("Error retrieving data from the database");
+//         } else {
+//             res.json(results);
+//         }
+//     });
+// });
+
+app.post("/searchHouse", (req, res) => {
+    const { building_name, address, lot_number, lessor_id, management_status, billing_deadline } = req.body;
+
+    // 기본 SQL 쿼리
+    let sqlQuery = `
+        SELECT 
+            houseinfo.*, 
+            lessor.name AS lessor_name -- lessor 테이블에서 이름 가져오기
+        FROM houseinfo
+        LEFT JOIN lessor ON houseinfo.lessor_id = lessor.lessor_id
+        WHERE 1=1
+    `;
+    const queryParams = [];
+
+    // 조건에 따라 쿼리와 파라미터 동적 생성
+    if (building_name) {
+        sqlQuery += " AND houseinfo.building_name LIKE ?";
+        queryParams.push(`%${building_name}%`);
+    }
+    if (address) {
+        sqlQuery += " AND houseinfo.address LIKE ?";
+        queryParams.push(`%${address}%`);
+    }
+    if (lot_number) {
+        sqlQuery += " AND houseinfo.lot_number LIKE ?";
+        queryParams.push(`%${lot_number}%`);
+    }
+    if (lessor_id) {
+        sqlQuery += " AND lessor.name LIKE ?";
+        queryParams.push(`%${lessor_id}%`);
+    }
+    if (management_status) {
+        sqlQuery += " AND houseinfo.management_status = ?";
+        queryParams.push(management_status);
+    }
+    if (billing_deadline) {
+        sqlQuery += " AND houseinfo.billing_deadline = ?";
+        queryParams.push(billing_deadline);
+    }
+
+    // 데이터베이스 쿼리 실행
+    db.query(sqlQuery, queryParams, (err, results) => {
+        if (err) {
+            console.error("Error searching house data:", err);
+            res.status(500).send("Error retrieving data from the database");
+        } else {
+            res.json(results); // 검색 결과 반환
+        }
+    });
+});
+
+
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            return res.status(500).json({ success: false, message: 'Failed to log out.' });
+        }
+        res.clearCookie('session_cookie_name'); // 세션 쿠키 제거
+        res.status(200).json({ success: true });
+    });
+});
+

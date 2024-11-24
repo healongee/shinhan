@@ -3,22 +3,21 @@
 body {
   font-family: 'Noto Sans KR', sans-serif;
   background-color: rgb(150, 209, 148);
-  margin: 50px;
-
+  margin: 0;
+  padding: 0;
 }
 
 .background {
   background-color: white;
-  height: auto;
   width: 90%;
-  max-width: 450px;
   padding: 10px;
-  margin: 0 auto;
+  margin: 20px auto;
   border-radius: 5px;
   box-shadow: 0px 40px 30px -20px rgba(0, 0, 0, 0.3);
   text-align: center;
 }
 
+/* ======= 로그인 및 버튼 스타일 ======= */
 .form {
   display: flex;
   padding: 30px;
@@ -31,7 +30,7 @@ body {
   background: none;
   padding: 10px;
   font-weight: 700;
-  transition: .2s;
+  transition: 0.2s;
   width: 75%;
 }
 
@@ -51,9 +50,83 @@ body {
   font-weight: 600;
   border-radius: 5px;
   cursor: pointer;
-  transition: .2s;
+  transition: 0.2s;
 }
 
 .btn:hover {
   background-color: rgb(49, 82, 48);
+}
+
+.logout-link {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.logout-link:hover {
+  background-color: #0056b3;
+}
+
+/* ======= 레이아웃 ======= */
+.App {
+  display: flex;
+  flex-direction: column; /* 세로 방향 정렬 */
+  height: 100vh;
+}
+
+/* 상단 메뉴바 */
+.navbar {
+  width: 100%;
+  background-color: #f8f9fa;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 15px; /* 메뉴 간 간격 */
+}
+
+.navbar ul li {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-weight: bold;
+  color: #333;
+}
+
+.navbar ul li:hover {
+  background-color: #e9ecef;
+  border-radius: 5px;
+}
+
+.navbar ul li.active {
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+}
+
+/* 콘텐츠 영역 */
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* 콘텐츠 영역만 스크롤 가능 */
 }
