@@ -90,7 +90,7 @@ tbody td {
     white-space: nowrap; /* 텍스트가 한 줄에 유지되도록 */
     text-overflow: ellipsis; /* 텍스트가 길 경우 말줄임 표시 */
     overflow: hidden; /* 넘치는 텍스트 숨김 */
-    max-width: 400px; /* 셀의 최대 너비 설정 */
+    max-width: 200px; /* 셀의 최대 너비 설정 */
 }
 
 tbody tr:nth-child(even) {

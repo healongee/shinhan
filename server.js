@@ -1,3 +1,6 @@
+
+
+
 const express = require('express')
 const session = require('express-session')
 const path = require('path');
@@ -204,19 +207,6 @@ app.get("/Tenentlist", (req, res) => {
     });
 });
 
-// app.get("/HouseInfo", (req, res) => {
-//     const sqlQuery = `SELECT * FROM houseinfo`;
-    
-//     db.query(sqlQuery, (err, results) => {
-//         if (err) {
-//             console.error("Error fetching house data:", err);
-//             res.status(500).send("Error retrieving data from the database");
-//         } else {
-//             res.json(results); // 데이터를 JSON 형식으로 반환
-//         }
-//     });
-// });
-
 app.get("/HouseInfo", (req, res) => {
     const sqlQuery = `
         SELECT 
@@ -239,48 +229,6 @@ app.get("/HouseInfo", (req, res) => {
         }
     });
 });
-
-
-// app.post("/searchHouse", (req, res) => {
-//     const { building_name, address, lot_number, lessor, management_status, billing_deadline } = req.body;
-
-//     let sqlQuery = "SELECT * FROM houseinfo WHERE 1=1";
-//     const queryParams = [];
-
-//     if (building_name) {
-//         sqlQuery += " AND building_name LIKE ?";
-//         queryParams.push(`%${building_name}%`);
-//     }
-//     if (address) {
-//         sqlQuery += " AND address LIKE ?";
-//         queryParams.push(`%${address}%`);
-//     }
-//     if (lot_number) {
-//         sqlQuery += " AND lot_number LIKE ?";
-//         queryParams.push(`%${lot_number}%`);
-//     }
-//     if (lessor) {
-//         sqlQuery += " AND lessor_id LIKE ?";
-//         queryParams.push(`%${lessor}%`);
-//     }
-//     if (management_status) {
-//         sqlQuery += " AND management_status = ?";
-//         queryParams.push(management_status);
-//     }
-//     if (billing_deadline) {
-//         sqlQuery += " AND billing_deadline = ?";
-//         queryParams.push(billing_deadline);
-//     }
-
-//     db.query(sqlQuery, queryParams, (err, results) => {
-//         if (err) {
-//             console.error("Error searching house data:", err);
-//             res.status(500).send("Error retrieving data from the database");
-//         } else {
-//             res.json(results);
-//         }
-//     });
-// });
 
 app.post("/searchHouse", (req, res) => {
     const { building_name, address, lot_number, lessor_id, management_status, billing_deadline } = req.body;
@@ -333,6 +281,54 @@ app.post("/searchHouse", (req, res) => {
     });
 });
 
+app.post("/searchLeaseContract", (req, res) => {
+    const { building_name, address, lot_number, lessor_id, management_status, billing_deadline } = req.body;
+
+    let sqlQuery = `
+        SELECT 
+            houseinfo.*, 
+            lessor.name AS lessor_name -- lessor 테이블에서 이름 가져오기
+        FROM houseinfo
+        LEFT JOIN lessor ON houseinfo.lessor_id = lessor.lessor_id
+        WHERE 1=1
+    `;
+    const queryParams = [];
+
+    if (building_name) {
+        sqlQuery += " AND houseinfo.building_name LIKE ?";
+        queryParams.push(`%${building_name}%`);
+    }
+    if (address) {
+        sqlQuery += " AND houseinfo.address LIKE ?";
+        queryParams.push(`%${address}%`);
+    }
+    if (lot_number) {
+        sqlQuery += " AND houseinfo.lot_number LIKE ?";
+        queryParams.push(`%${lot_number}%`);
+    }
+    if (lessor_id) {
+        sqlQuery += " AND lessor.name LIKE ?";
+        queryParams.push(`%${lessor_id}%`);
+    }
+    if (management_status) {
+        sqlQuery += " AND houseinfo.management_status = ?";
+        queryParams.push(management_status);
+    }
+    if (billing_deadline) {
+        sqlQuery += " AND houseinfo.billing_deadline = ?";
+        queryParams.push(billing_deadline);
+    }
+
+    // 데이터베이스 쿼리 실행
+    db.query(sqlQuery, queryParams, (err, results) => {
+        if (err) {
+            console.error("Error searching house data:", err);
+            res.status(500).send("Error retrieving data from the database");
+        } else {
+            res.json(results); // 검색 결과 반환
+        }
+    });
+});
 
 app.get('/logout', (req, res) => {
     req.session.destroy(err => {

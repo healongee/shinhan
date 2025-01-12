@@ -5,6 +5,7 @@ import LessorList from './LessorList';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TenentList from './TenentList';
 import HouseInfo from './HouseInfo';
+import LeaseContract from './LeaseContract';
 
 function Login(props) {
   const [id, setId] = useState("");
@@ -145,6 +146,9 @@ function App() {
     if (menu === "HouseInfo") {
       return <HouseInfo />;
     }
+    if (menu === "LeaseContract") {
+      return <LeaseContract />;
+    } 
     return <div>준비 중입니다...</div>;
   };
 
@@ -163,7 +167,7 @@ function App() {
               <li onClick={() => setMenu("LessorList")}>임대인정보</li>
               <li onClick={() => setMenu("TenentList")}>임차인정보</li>
               <li onClick={() => setMenu("HouseInfo")}>주택정보</li>
-              <li>임대차계약</li>
+              <li onClick={() => setMenu("LeaseContract")}>임대차계약</li>
               <li>임대료청구</li>
               <li>이주정산</li>
               <li>금전출납</li>
