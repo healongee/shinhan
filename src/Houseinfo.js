@@ -4,6 +4,7 @@ import Axios from "axios";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import React from "react";
 
 const House = ({ usage_status, management_status, billing_deadline, vat, lessor_name, town, lot_number, unit_number, building_name, postal_code, address,
     land_area_m2, land_area_py, land_purpose, building_area_m2, building_area_py, building_structure,
@@ -58,6 +59,7 @@ class HouseInfo extends Component {
     getList = () => {
         Axios.get("http://localhost:3001/HouseInfo")
             .then((response) => {
+                console.log("서버 응답 데이터:", response.data); // 서버에서 반환된 데이터를 확인
                 this.setState({ houseList: response.data });
             })
             .catch((error) => {

@@ -8,6 +8,7 @@ const db = require('./lib/db');
 const sessionOption = require('./lib/sessionOption');
 const bodyParser = require("body-parser");
 const bcrypt = require('bcrypt');
+const { start } = require('repl');
 
 app.use(express.static(path.join(__dirname, '/build')));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -155,6 +156,80 @@ app.get("/Lessorlist", (req, res) => {
     });
 });
 
+app.post("/addLessor", (req, res) => {
+    const {
+        name,
+        usage_status = "사용", // 기본값 "사용"
+        is_business_owner = "N", // 기본값 "N"
+        relationship,
+        related_lessor,
+        ssn,
+        address,
+        mobile,
+        email,
+        remarks,
+        registered_by = "admin", // 기본값 "admin" (수정 가능)
+    } = req.body;
+
+    const finalIsBusinessOwner = is_business_owner === "Y" ? "Y" : "N"; // 보안 강화: 유효값만 허용
+
+    // 데이터 유효성 검사
+    if (!name || !usage_status || !mobile) {
+        return res.status(400).send("필수 필드(name, usage_status, mobile)를 입력해야 합니다.");
+    }
+
+    // SQL 쿼리 작성
+    const sqlQuery = `INSERT INTO lessor (
+            usage_status,name,is_business_owner,relationship,related_lessor,ssn,address,mobile,email,remarks,registered_by
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const queryParams = [
+        usage_status,
+        name,
+        finalIsBusinessOwner,
+        relationship || null,
+        related_lessor || null,
+        ssn || null,
+        address || null,
+        mobile,
+        email || null,
+        remarks || null,
+        registered_by,
+    ];
+
+    // 데이터베이스에 삽입
+    db.query(sqlQuery, queryParams, (err, result) => {
+        if (err) {
+            console.error("Error inserting lessor data:", err);
+            res.status(500).send("임대인 데이터를 삽입 중 오류가 발생했습니다.");
+        } else {
+            res.status(201).send("임대인이 성공적으로 등록되었습니다.");
+        }
+    });
+});
+
+app.delete("/deleteLessor", async (req, res) => {
+    const { id } = req.body; // 클라이언트에서 전송된 id
+
+    if (!id) {
+        return res.status(400).json({ success: false, message: "lessor_id is required" });
+    }
+
+    try {
+        const [result] = await db.promise().query("DELETE FROM lessor WHERE lessor_id = ?", [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: "해당 임대인이 없습니다." });
+        }
+
+        res.status(200).json({ success: true, message: "삭제되었습니다." });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "삭제 실패" });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
@@ -203,93 +278,84 @@ app.get("/Tenentlist", (req, res) => {
         }
     });
 });
+app.post("/addTenent", (req, res) => {
+    const {
+        name,
+        usage_status = "사용", // 기본값 "사용"
+        relationship,
+        related_tenent,
+        ssn,
+        address,
+        mobile,
+        email,
+        remarks,
+        registered_by = "admin", // 기본값 "admin" (수정 가능)
+    } = req.body;
 
-// app.get("/HouseInfo", (req, res) => {
-//     const sqlQuery = `SELECT * FROM houseinfo`;
-    
-//     db.query(sqlQuery, (err, results) => {
-//         if (err) {
-//             console.error("Error fetching house data:", err);
-//             res.status(500).send("Error retrieving data from the database");
-//         } else {
-//             res.json(results); // 데이터를 JSON 형식으로 반환
-//         }
-//     });
-// });
+    // 데이터 유효성 검사
+    if (!name || !usage_status || !mobile) {
+        return res.status(400).send("필수 필드(name, usage_status, mobile)를 입력해야 합니다.");
+    }
 
-app.get("/HouseInfo", (req, res) => {
+    // SQL 쿼리 작성
     const sqlQuery = `
-        SELECT 
-            hi.*, 
-            l.name AS lessor_name
-        FROM 
-            houseinfo hi
-        LEFT JOIN 
-            lessor l 
-        ON 
-            hi.lessor_id = l.lessor_id;
+        INSERT INTO tenent (
+            usage_status,name,relationship,related_tenent,ssn,address,mobile,email,remarks,registered_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    
-    db.query(sqlQuery, (err, results) => {
+
+    const queryParams = [
+        usage_status,
+        name,
+        relationship || null,
+        related_tenent || null,
+        ssn || null,
+        address || null,
+        mobile,
+        email || null,
+        remarks || null,
+        registered_by,
+    ];
+
+    // 데이터베이스에 삽입
+    db.query(sqlQuery, queryParams, (err, result) => {
         if (err) {
-            console.error("Error fetching house data:", err);
-            res.status(500).send("Error retrieving data from the database");
+            console.error("Error inserting tenent data:", err);
+            res.status(500).send("임차인 데이터를 삽입 중 오류가 발생했습니다.");
         } else {
-            res.json(results); // 조인된 데이터를 JSON 형식으로 반환
+            res.status(201).send("임차인이 성공적으로 등록되었습니다.");
         }
     });
 });
 
+app.delete("/deleteTenent", async (req, res) => {
+    const { id } = req.body; // 클라이언트에서 전송된 id
 
-// app.post("/searchHouse", (req, res) => {
-//     const { building_name, address, lot_number, lessor, management_status, billing_deadline } = req.body;
+    if (!id) {
+        return res.status(400).json({ success: false, message: "tenent_id is required" });
+    }
 
-//     let sqlQuery = "SELECT * FROM houseinfo WHERE 1=1";
-//     const queryParams = [];
+    try {
+        const [result] = await db.promise().query("DELETE FROM tenent WHERE tenent_id = ?", [id]);
 
-//     if (building_name) {
-//         sqlQuery += " AND building_name LIKE ?";
-//         queryParams.push(`%${building_name}%`);
-//     }
-//     if (address) {
-//         sqlQuery += " AND address LIKE ?";
-//         queryParams.push(`%${address}%`);
-//     }
-//     if (lot_number) {
-//         sqlQuery += " AND lot_number LIKE ?";
-//         queryParams.push(`%${lot_number}%`);
-//     }
-//     if (lessor) {
-//         sqlQuery += " AND lessor_id LIKE ?";
-//         queryParams.push(`%${lessor}%`);
-//     }
-//     if (management_status) {
-//         sqlQuery += " AND management_status = ?";
-//         queryParams.push(management_status);
-//     }
-//     if (billing_deadline) {
-//         sqlQuery += " AND billing_deadline = ?";
-//         queryParams.push(billing_deadline);
-//     }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: "해당 임차인이 없습니다." });
+        }
 
-//     db.query(sqlQuery, queryParams, (err, results) => {
-//         if (err) {
-//             console.error("Error searching house data:", err);
-//             res.status(500).send("Error retrieving data from the database");
-//         } else {
-//             res.json(results);
-//         }
-//     });
-// });
+        res.status(200).json({ success: true, message: "삭제되었습니다." });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "삭제 실패" });
+    }
+});
+
 
 app.post("/searchHouse", (req, res) => {
     const { building_name, address, lot_number, lessor_id, management_status, billing_deadline } = req.body;
 
     // 기본 SQL 쿼리
     let sqlQuery = `
-        SELECT 
-            houseinfo.*, 
-            lessor.name AS lessor_name -- lessor 테이블에서 이름 가져오기
+        SELECT houseinfo.*, lessor.name AS lessor_name
         FROM houseinfo
         LEFT JOIN lessor ON houseinfo.lessor_id = lessor.lessor_id
         WHERE 1=1
@@ -333,6 +399,109 @@ app.post("/searchHouse", (req, res) => {
     });
 });
 
+app.get("/HouseInfo", (req, res) => {
+    const sqlQuery = `
+        SELECT hi.*, l.name AS lessor_name
+        FROM houseinfo hi
+        LEFT JOIN lessor l 
+        ON hi.lessor_id = l.lessor_id;
+    `;
+    
+    db.query(sqlQuery, (err, results) => {
+        if (err) {
+            console.error("Error fetching house data:", err);
+            res.status(500).send("Error retrieving data from the database");
+        } else {
+            res.json(results); // 조인된 데이터를 JSON 형식으로 반환
+        }
+    });
+});
+
+app.post("/searchLeaseContract", (req, res) => {
+    const {selected_date, start_date, end_date, house_id, lot_number, tenent_id, contract_status, billing_deadline} = req.body;
+
+    let sqlQuery = `
+      SELECT 
+        lc.contract_number, lc.contract_status,h.address AS house_address,h.billing_deadline AS billing_deadline,
+        DATE_FORMAT(lc.contract_date, '%Y-%m-%d') AS contract_date,
+        DATE_FORMAT(lc.lease_period_start, '%Y-%m-%d') AS lease_period_start, 
+        DATE_FORMAT(lc.lease_period_end, '%Y-%m-%d') AS lease_period_end, 
+        te.name AS tenent_name,te.mobile AS tenent_mobile,
+        FORMAT(lc.deposit, 0) AS deposit,FORMAT(lc.monthly_rent, 0) AS monthly_rent,
+        FORMAT(lc.shared_cost, 0) AS shared_cost,FORMAT(lc.down_payment, 0) AS down_payment, 
+        FORMAT(lc.interim_payment, 0) AS interim_payment,FORMAT(lc.prepaid_rent, 0) AS prepaid_rent, 
+        lc.deposit as fromOther, lc.deposit as fromOther1, lc.contract_form AS fromOther2
+    FROM LeaseContract lc
+    JOIN Tenent te ON lc.tenent_id = te.tenent_id
+    JOIN HouseInfo h ON lc.house_id = h.house_id
+      WHERE 1=1
+    `;
+    const queryParams = [];
+
+    // 동적 조건 추가
+    if (selected_date && start_date && end_date) {
+        // 선택된 날짜 필드 기준으로 시작일자와 종료일자 조건 추가
+        sqlQuery += ` AND lc.${selected_date} BETWEEN ? AND ?`;
+        console.log(start_date);
+        console.log(end_date);
+        queryParams.push(start_date, end_date);
+    }
+    if (contract_status) {
+        sqlQuery += " AND lc.contract_status LIKE ?";
+        queryParams.push(`%${contract_status}%`); // 부분 검색
+    }
+    if (tenent_id) {
+        sqlQuery += " AND te.name LIKE ?";
+        queryParams.push(`%${tenent_id}%`); // 부분 검색
+    }
+    if (house_id) {
+        sqlQuery += " AND h.address LIKE ?";
+        queryParams.push(`%${house_id}%`); // 부분 검색
+    }
+    if (billing_deadline) {
+        sqlQuery += " AND h.billing_deadline = ?";
+        queryParams.push(billing_deadline);
+    }
+    if (lot_number) {
+        sqlQuery += " AND h.lot_number LIKE ?";
+        queryParams.push(`%${lot_number}%`); // 부분 검색
+    } 
+    // 데이터베이스 쿼리 실행
+    db.query(sqlQuery, queryParams, (err, results) => {
+        if (err) {
+            console.error("Error searching lease contract data:", err);
+            res.status(500).send("Error retrieving data from the database");
+        } else {
+            res.json(results); // 검색 결과 반환
+        }
+    });
+});
+
+app.get("/LeaseContract", (req, res) => {
+    const query = `
+    SELECT 
+        lc.contract_number, lc.contract_status,h.address AS house_address,h.billing_deadline AS billing_deadline,
+        DATE_FORMAT(lc.contract_date, '%Y-%m-%d') AS contract_date,
+        DATE_FORMAT(lc.lease_period_start, '%Y-%m-%d') AS lease_period_start, 
+        DATE_FORMAT(lc.lease_period_end, '%Y-%m-%d') AS lease_period_end, 
+        te.name AS tenent_name,te.mobile AS tenent_mobile,
+        FORMAT(lc.deposit, 0) AS deposit,FORMAT(lc.monthly_rent, 0) AS monthly_rent,
+        FORMAT(lc.shared_cost, 0) AS shared_cost,FORMAT(lc.down_payment, 0) AS down_payment, 
+        FORMAT(lc.interim_payment, 0) AS interim_payment,FORMAT(lc.prepaid_rent, 0) AS prepaid_rent, 
+        lc.deposit as fromOther, lc.deposit as fromOther1, h.address AS fromOther2
+    FROM LeaseContract lc
+    JOIN Tenent te ON lc.tenent_id = te.tenent_id
+    JOIN HouseInfo h ON lc.house_id = h.house_id;
+    `;
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error fetching LeaseContract data:", err);
+            res.status(500).send("Error fetching data.");
+        } else {
+            res.json(results);
+        }
+    });
+});
 
 app.get('/logout', (req, res) => {
     req.session.destroy(err => {

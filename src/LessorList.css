@@ -57,3 +57,58 @@ tbody tr:nth-child(even) {
 tbody tr:hover {
     background-color: #f0f8ff; /* 행 위에 마우스 올릴 때 배경색 */
 }
+
+.modal-header, .modal-footer {
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    padding: 10px; /* 기존보다 여백 축소 */
+}
+
+.modal-title {
+    font-size: 16px; /* 폰트 크기 축소 */
+    font-weight: bold;
+    color: #333;
+}
+
+.modal-body {
+    padding: 15px; /* 여백 축소 */
+    font-size: 14px; /* 전체 폰트 크기 조정 */
+}
+
+.modal-body .form-group {
+    margin-bottom: 5px; /* 필드 간 간격 축소 */
+}
+
+.modal-body .form-control {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 6px; /* 입력 필드 여백 축소 */
+    font-size: 13px; /* 폰트 크기 조정 */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px; /* 버튼 간격 축소 */
+    padding: 10px; /* 여백 축소 */
+}
+
+.modal-footer .btn {
+    font-size: 13px; /* 버튼 텍스트 크기 축소 */
+    padding: 6px 12px; /* 버튼 크기 축소 */
+}
+
+.modal-footer .btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* 모달 최대 크기 제한 */
+.modal-dialog {
+    max-width: 500px; /* 최대 너비 설정 */
+    width: 90%; /* 화면 크기에 맞게 조정 */
+    margin: auto;
+}
