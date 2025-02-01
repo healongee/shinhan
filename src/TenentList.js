@@ -217,7 +217,7 @@ class TenentList extends Component {
         showAddModal: false, // 등록 모달 상태
 
         showViewModal: false, // 보기 모달 상태
-        selectedTenent: null, // 선택된 임대인 데이터
+        selectedTenent: null // 선택된 임대인 데이터
     };
 
     getList = () => {

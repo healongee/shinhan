@@ -1,0 +1,110 @@
+.button-group {
+    display: flex;
+    justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+    margin-bottom: 10px; /* 버튼과 테이블 사이 간격 */
+    gap: 15px; /* 버튼 간의 간격 */
+}
+
+.button-group-right {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px; /* 버튼과 테이블의 간격 */
+    gap: 20px; /* 버튼 사이의 간격 */
+}
+
+form {
+    margin-bottom: 20px; /* 폼과 테이블 사이 간격 */
+}
+
+tbody tr {
+    background-color: white; /* 행의 기본 배경색 */
+    transition: background-color 0.3s; /* 배경색 변화 애니메이션 */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* 짝수 행 배경색 */
+}
+
+tbody tr:hover {
+    background-color: #f0f8ff; /* 행 위에 마우스 올릴 때 배경색 */
+}
+
+form .form-row {
+    display: flex;
+    justify-content: space-between; /* 입력 필드를 좌우로 정렬 */
+    gap: 15px; /* 필드 간의 간격 */
+}
+
+form .form-row .col {
+    flex: 1;
+}
+
+form label {
+    font-weight: bold;
+    margin-bottom: 5px; /* 라벨과 입력 필드 간의 간격 */
+    display: block; /* 라벨을 블록으로 표시 */
+}
+
+form input {
+    width: 100%; /* 입력 필드를 부모 크기에 맞춤 */
+    padding: 8px; /* 필드 안쪽 여백 */
+    border: 1px solid #ccc; /* 테두리 설정 */
+    border-radius: 4px; /* 테두리 둥글게 */
+    transition: border-color 0.3s; /* 포커스 시 애니메이션 */
+}
+
+form input:focus {
+    border-color: #007bff; /* 포커스 시 테두리 색상 */
+    outline: none; /* 기본 포커스 스타일 제거 */
+}
+
+/*.table-container {
+    width: 100%; 
+    overflow-x: auto;
+    margin-bottom: 20px;
+}*/
+
+.table-container {
+    width: 100%; /* 부모 컨테이너에 맞춤 */
+    overflow-x: auto; /* 좁은 화면에서는 가로 스크롤 허용 */
+    text-align: right;
+}
+
+table {
+    width: 100%; /* 테이블을 부모 컨테이너의 너비에 맞춤 */
+    border-collapse: collapse; /* 테두리 중복 제거 */
+    color: black; /* 텍스트 색상 */
+    text-align: left; /* 텍스트 정렬 */
+    table-layout: auto; /* 열 너비를 콘텐츠에 따라 자동으로 조정 */
+    min-width: 1200px; /* 테이블이 너무 좁아지지 않도록 최소 너비 설정 */
+}
+
+thead th {
+    background-color: #f2f2f2; /* 헤더 배경색 */
+    color: #333; /* 헤더 텍스트 색상 */
+    font-weight: bold;
+    padding: 10px; /* 셀 안쪽 여백 */
+    border-bottom: 2px solid #ccc; /* 헤더 아래 테두리 */
+    white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+}
+
+tbody td {
+    padding: 8px 10px; /* 셀 안쪽 여백 */
+    border-bottom: 1px solid #ddd; /* 셀 아래 테두리 */
+    white-space: nowrap; /* 텍스트가 한 줄에 유지되도록 */
+    overflow: visible; /* 텍스트가 잘리지 않도록 설정 */
+}
+
+td.address {
+    width: 400px; /* 주소 열의 너비를 넉넉히 설정 */
+    word-break: normal; /* 텍스트 줄 바꿈을 기본으로 유지 */
+}
+
+td.contract-period {
+    width: 250px; /* 계약 기간 열의 너비 설정 */
+}
+
+td.account-book-address {
+    width: 400px; /* 주소 열의 너비를 넉넉히 설정 */
+    word-break: normal; /* 텍스트 줄 바꿈을 기본으로 유지 */
+}

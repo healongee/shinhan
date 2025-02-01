@@ -417,6 +417,22 @@ app.get("/HouseInfo", (req, res) => {
     });
 });
 
+app.get("/house/:houseId", (req, res) => {
+    const houseId = req.params.houseId;
+    console.log(`Fetching house info for ID: ${houseId}`);
+    
+    db.query("SELECT hi.*, l.name AS lessor_name FROM houseinfo hi LEFT JOIN lessor l ON hi.lessor_id = l.lessor_id where house_id=?", [houseId], (err, results) => {
+        if (err) {
+            console.error("Error fetching house info:", err);
+            res.status(500).json({ error: "Database error" });
+        } else if (results.length === 0) {
+            res.status(404).json({ error: "No house found" });
+        } else {
+            res.json(results[0]);
+        }
+    });
+});
+
 app.post("/searchLeaseContract", (req, res) => {
     const {selected_date, start_date, end_date, house_id, lot_number, tenent_id, contract_status, billing_deadline} = req.body;
 

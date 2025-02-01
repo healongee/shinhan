@@ -6,6 +6,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import TenentList from './TenentList';
 import HouseInfo from './HouseInfo';
 import LeaseContract from './LeaseContract';
+import LeaseStatement from './LeaseStatement';
+import HouseinfoDetail from "./HouseinfoDetail";  // 추가
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function Login(props) {
   const [id, setId] = useState("");
@@ -149,6 +152,9 @@ function App() {
     if (menu === "LeaseContract") {
       return <LeaseContract />;
     } 
+    if (menu === "LeaseStatement") {
+      return <LeaseStatement />;
+    } 
     return <div>준비 중입니다...</div>;
   };
 
@@ -160,7 +166,8 @@ function App() {
     content = <Signin setMode={setMode} />;
   } else if (mode === "WELCOME") {
     content = (
-      <>
+      //<>
+      <Router>
         <div className="App">
           <div className="navbar">
             <ul>
@@ -168,18 +175,25 @@ function App() {
               <li onClick={() => setMenu("TenentList")}>임차인정보</li>
               <li onClick={() => setMenu("HouseInfo")}>주택정보</li>
               <li onClick={() => setMenu("LeaseContract")}>임대차계약</li>
-              <li>임대료청구</li>
+              <li onClick={() => setMenu("LeaseStatement")}>임대료청구</li>
               <li>이주정산</li>
               <li>금전출납</li>
               <li>시스템</li>
               <li onClick={handleLogout}>로그아웃</li>
             </ul>
           </div>
-          <div className="content">
+          {/* <div className="content">
             {renderContent()}
+          </div> */}
+          <div className="content">
+            <Routes>
+              <Route path="/" element={renderContent()} />
+              <Route path="/house/:house_id" element={<HouseinfoDetail />} />
+            </Routes>
           </div>
         </div>
-      </>
+      {/* </> */}
+      </Router>
     );
   }
 
@@ -191,72 +205,3 @@ function App() {
 }
 
 export default App;
-
-
-// function App() {
-//   const [mode, setMode] = useState("");
-//   const [menu, setMenu] = useState("LessorList");
-
-//   useEffect(() => {
-//     fetch("http://localhost:3001/authcheck")
-//       .then((res) => res.json())
-//       .then((json) => {        
-//         if (json.isLogin === "True") {
-//           setMode("WELCOME");
-//         } else {
-//           setMode("LOGIN");
-//         }
-//       });
-//   }, []); 
-
-//   const renderContent = () => {
-//     if (menu === "LessorList") {
-//       return <LessorList />;
-//     }
-//     if (menu === "TenentList") {
-//       return <TenentList />;
-//     }
-//     if (menu === "HouseInfo") {
-//       return <HouseInfo />;
-//     }
-//     return <div>준비 중입니다...</div>;
-//   };
-
-//   let content = null;  
-
-//   if (mode === "LOGIN") {
-//     content = <Login setMode={setMode} />;
-//   } else if (mode === "SIGNIN") {
-//     content = <Signin setMode={setMode} />;
-//   } else if (mode === "WELCOME") {
-//     content = <>
-//       {/* <h2>신한 부동산 관리 프로그램 입니다.</h2> */}
-//       <div className="App">
-//         <div className="navbar">
-//           <ul>
-//             <li onClick={() => setMenu("LessorList")}>임대인정보</li>
-//             <li onClick={() => setMenu("TenentList")}>임차인정보</li>
-//             <li onClick={() => setMenu("HouseInfo")}>주택정보</li>
-//             <li>임대차계약</li>
-//             <li>임대료청구</li>
-//             <li>이주정산</li>
-//             <li>금전출납</li>
-//             <li>시스템</li>
-//           </ul>
-//           <a href="/logout" className="logout-link">로그아웃</a>
-//         </div>
-//         <div className="content">
-//           {renderContent()}
-//         </div>
-//       </div>
-//     </>;
-//   }
-
-//   return (
-//     <div className="background">
-//       {content}
-//     </div>
-//   );
-// }
-
-// export default App;
