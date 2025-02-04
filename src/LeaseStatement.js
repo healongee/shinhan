@@ -79,7 +79,7 @@ class LeaseStatement extends Component {
     }
 
     render() {
-        const { statementList, selected_date, start_date, end_date, house_id, lot_number, tenent_id, contract_status, billing_deadline } = this.state;
+        const { statementList, selected_date, house_id, lot_number, tenent_id, contract_status, billing_deadline } = this.state;
 
         return (
             <div>

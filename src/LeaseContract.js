@@ -79,7 +79,7 @@ class LeaseContract extends Component {
     }
 
     render() {
-        const { contractList, selected_date, start_date, end_date, house_id, lot_number, tenent_id, contract_status, billing_deadline } = this.state;
+        const { contractList, selected_date, house_id, lot_number, tenent_id, contract_status, billing_deadline } = this.state;
 
         return (
             <div>

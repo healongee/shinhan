@@ -433,6 +433,50 @@ app.get("/house/:houseId", (req, res) => {
     });
 });
 
+app.post("/house", (req, res) => {
+    const {
+        usage_status, management_status, lessor_name, billing_deadline, vat,
+        town, lot_number, unit_number, building_name, postal_code,
+        land_area_m2, land_area_py, land_purpose, building_area_m2, building_area_py,
+        building_purpose, building_structure, remarks, address,
+        water_meter_date, water_payment_type, water_billing_month,
+        electricity_meter_date, electricity_payment_type,
+        gas_meter_date, gas_payment_type, other_fee,
+        cable_fee, internet_fee, old_address, old_postal_code
+    } = req.body;
+
+    const sql = `
+        INSERT INTO HouseInfo (
+            usage_status, management_status, billing_deadline, vat,
+            town, lot_number, unit_number, building_name, postal_code, address, 
+            land_area_m2, land_area_py, land_purpose, building_area_m2, building_area_py,
+            building_purpose, building_structure, remarks,
+            water_meter_date, water_payment_type, water_billing_month,
+            electricity_meter_date, electricity_payment_type,
+            gas_meter_date, gas_payment_type, other_fee,
+            cable_fee, internet_fee, old_address, old_postal_code
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    const values = [
+        usage_status, management_status, billing_deadline, vat,
+        town, lot_number, unit_number, building_name, postal_code, address,
+        land_area_m2, land_area_py, land_purpose, building_area_m2, building_area_py,
+        building_purpose, building_structure, remarks,
+        water_meter_date, water_payment_type, water_billing_month,
+        electricity_meter_date, electricity_payment_type,
+        gas_meter_date, gas_payment_type, other_fee,
+        cable_fee, internet_fee, old_address, old_postal_code
+    ];
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error("Error inserting house data:", err);
+            return res.status(500).json({ error: "Database insertion failed" });
+        }
+        res.status(201).json({ message: "House registered successfully", house_id: result.insertId });
+    });
+});
+
 app.post("/searchLeaseContract", (req, res) => {
     const {selected_date, start_date, end_date, house_id, lot_number, tenent_id, contract_status, billing_deadline} = req.body;
 
