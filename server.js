@@ -435,7 +435,7 @@ app.get("/house/:houseId", (req, res) => {
 
 app.post("/house", (req, res) => {
     const {
-        usage_status, management_status, lessor_name, billing_deadline, vat,
+        usage_status, management_status, billing_deadline, vat,
         town, lot_number, unit_number, building_name, postal_code,
         land_area_m2, land_area_py, land_purpose, building_area_m2, building_area_py,
         building_purpose, building_structure, remarks, address,
@@ -476,6 +476,20 @@ app.post("/house", (req, res) => {
         res.status(201).json({ message: "House registered successfully", house_id: result.insertId });
     });
 });
+
+app.delete("/house/:house_id", (req, res) => {
+    const houseId = req.params.house_id;
+    
+    const sql = "DELETE FROM houseinfo WHERE house_id = ?";
+    db.query(sql, [houseId], (err, result) => {
+      if (err) {
+        console.error("Error deleting houseinfo: ", err);
+        res.status(500).json({ error: "Failed to delete houseinfo" });
+      } else {
+        res.json({ message: "House info deleted successfully" });
+      }
+    });
+  });
 
 app.post("/searchLeaseContract", (req, res) => {
     const {selected_date, start_date, end_date, house_id, lot_number, tenent_id, contract_status, billing_deadline} = req.body;
