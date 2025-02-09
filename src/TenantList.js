@@ -4,15 +4,15 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal"
-import "./TenentList.css"; // CSS 파일을 불러옵니다.
+import "./TenantList.css"; // CSS 파일을 불러옵니다.
 import React from "react"
 
-const Tenent = ({ usage_status, relationship, related_tenent, name, ssn, address, mobile, email, remarks, onClick }) => {
+const Tenant = ({ usage_status, relationship, related_tenant, name, ssn, address, mobile, email, remarks, onClick }) => {
     return (        
         <tr onClick={onClick} style={{ cursor: "pointer" }}>
             <td>{usage_status}</td>
             <td>{relationship}</td>
-            <td>{related_tenent}</td>
+            <td>{related_tenant}</td>
             <td>{name}</td>
             <td>{ssn}</td>
             <td>{address}</td>
@@ -23,15 +23,15 @@ const Tenent = ({ usage_status, relationship, related_tenent, name, ssn, address
         </tr>
     );
 };
-// ViewTenentModal 컴포넌트 정의
-const ViewTenentModal = ({ show, handleClose, data, refreshList }) => {
+// ViewTenantModal 컴포넌트 정의
+const ViewTenantModal = ({ show, handleClose, data, refreshList }) => {
     if (!data) return null;
 
     const handleDelete = async () => {
         if (window.confirm("정말 삭제하시겠습니까?")) {
             try {
-                const response = await Axios.delete("http://localhost:3001/deleteTenent", {
-                    data: { id: data.tenent_id }, // 선택된 데이터의 ID 전송
+                const response = await Axios.delete("http://localhost:3001/deleteTenant", {
+                    data: { id: data.tenant_id }, // 선택된 데이터의 ID 전송
                 });
                 if (response.data.success) {
                     alert("삭제되었습니다.");
@@ -41,7 +41,7 @@ const ViewTenentModal = ({ show, handleClose, data, refreshList }) => {
                     alert(`삭제 실패: ${response.data.message}`);
                 }
             } catch (error) {
-                console.error("Error deleting tenent:", error);
+                console.error("Error deleting tenant:", error);
                 alert("오류가 발생했습니다.");
             }
         }
@@ -56,7 +56,7 @@ const ViewTenentModal = ({ show, handleClose, data, refreshList }) => {
                 {/* 데이터 출력 */}
                 <p><strong>사용여부:</strong> {data.usage_status}</p>
                 <p><strong>관계:</strong> {data.relationship}</p>
-                <p><strong>관련 임차인:</strong> {data.related_tenent}</p>
+                <p><strong>관련 임차인:</strong> {data.related_tenant}</p>
                 <p><strong>이름:</strong> {data.name}</p>
                 <p><strong>주민등록번호:</strong> {data.ssn}</p>
                 <p><strong>주소:</strong> {data.address}</p>
@@ -71,13 +71,13 @@ const ViewTenentModal = ({ show, handleClose, data, refreshList }) => {
         </Modal>
     );
 };
-// AddTenentModal 컴포넌트 정의
-const AddTenentModal = ({ show, handleClose, refreshList }) => {
+// AddTenantModal 컴포넌트 정의
+const AddTenantModal = ({ show, handleClose, refreshList }) => {
     const [formData, setFormData] = React.useState({
         name: "",
         ssn: "",
         relation: "",
-        relatedTenent: "",
+        relatedTenant: "",
         address: "",
         mobile: "",
         email: "",
@@ -94,11 +94,11 @@ const AddTenentModal = ({ show, handleClose, refreshList }) => {
         const dataToSubmit = {
             ...formData,
             relation: formData.relation || "본인",
-            relatedTenent: formData.relatedTenent || formData.name,
+            relatedTenant: formData.relatedTenant || formData.name,
         };
 
         try {
-            const response = await Axios.post("http://localhost:3001/addTenent", dataToSubmit);
+            const response = await Axios.post("http://localhost:3001/addTenant", dataToSubmit);
             if (response.data) {
                 alert("등록이 완료되었습니다.");
                 handleClose();
@@ -107,7 +107,7 @@ const AddTenentModal = ({ show, handleClose, refreshList }) => {
                 alert(`등록 실패: ${response.data.message}`);
             }
         } catch (error) {
-            console.error("Error registering tenent:", error);
+            console.error("Error registering tenant:", error);
             alert("오류가 발생했습니다.");
         }
     };
@@ -151,8 +151,8 @@ const AddTenentModal = ({ show, handleClose, refreshList }) => {
                         <Form.Label>관련 임대인</Form.Label>
                         <Form.Control
                             type="text"
-                            name="relatedTenent"
-                            value={formData.relatedTenent}
+                            name="relatedTenant"
+                            value={formData.relatedTenant}
                             onChange={handleChange}
                             placeholder="예시) '홍길동'"
                         />
@@ -208,23 +208,23 @@ const AddTenentModal = ({ show, handleClose, refreshList }) => {
     );
 };
 
-class TenentList extends Component {
+class TenantList extends Component {
     state = {
-        tenentList: [], // 초기 상태를 빈 배열로 설정
+        tenantList: [], // 초기 상태를 빈 배열로 설정
         name: '',
         ssn: '',
         mobile: '', 
         showAddModal: false, // 등록 모달 상태
 
         showViewModal: false, // 보기 모달 상태
-        selectedTenent: null // 선택된 임대인 데이터
+        selectedTenant: null // 선택된 임대인 데이터
     };
 
     getList = () => {
-        Axios.get("http://localhost:3001/Tenentlist")
+        Axios.get("http://localhost:3001/Tenantlist")
             .then((response) => {
                 console.log("서버 응답 데이터:", response.data); // 서버에서 반환된 데이터를 확인
-                this.setState({ tenentList: response.data }); // 데이터를 tenentList에 설정
+                this.setState({ tenantList: response.data }); // 데이터를 tenantList에 설정
             })
             .catch((error) => {
                 console.error("Error fetching list:", error);
@@ -232,15 +232,15 @@ class TenentList extends Component {
     };
 
     // 검색 요청을 보내는 함수
-    searchTenent = () => {
+    searchTenant = () => {
         const { name, ssn, mobile } = this.state;
-        Axios.post("http://localhost:3001/searchTenent", { name, ssn, mobile })
+        Axios.post("http://localhost:3001/searchTenant", { name, ssn, mobile })
             .then((response) => {
                 console.log("검색 결과:", response.data);
-                this.setState({ tenentList: response.data });
+                this.setState({ tenantList: response.data });
             })
             .catch((error) => {
-                console.error("Error searching tenent:", error);
+                console.error("Error searching tenant:", error);
             });
     };
 
@@ -255,8 +255,8 @@ class TenentList extends Component {
         this.setState({ showAddModal: show });
     };
 
-    toggleViewModal = (show, tenent = null) => {
-        this.setState({ showViewModal: show, selectedTenent: tenent });
+    toggleViewModal = (show, tenant = null) => {
+        this.setState({ showViewModal: show, selectedTenant: tenant });
     };
 
     // 컴포넌트가 마운트되었을 때 리스트를 가져옵니다.
@@ -265,13 +265,13 @@ class TenentList extends Component {
     }
 
     render() {
-        //const { tenentList, name, ssn, mobile } = this.state;
-        const { tenentList, name, ssn, mobile, showAddModal, showViewModal, selectedTenent } = this.state;
+        //const { tenantList, name, ssn, mobile } = this.state;
+        const { tenantList, name, ssn, mobile, showAddModal, showViewModal, selectedTenant } = this.state;
 
         return (
             <div>
                 <div className="button-group">
-                    <Button variant="info" onClick={this.searchTenent}>검색</Button>
+                    <Button variant="info" onClick={this.searchTenant}>검색</Button>
                     <Button variant="secondary" onClick={this.getList}>초기화</Button>
                     <Button variant="success" onClick={() => this.toggleAddModal(true)}>등록</Button>                                        
                 </div>
@@ -325,13 +325,13 @@ class TenentList extends Component {
                     </thead>
 
                     <tbody>
-                        {/* {tenentList.length > 0 ? (
-                            tenentList.map((v, index) => (
-                                <Tenent
+                        {/* {tenantList.length > 0 ? (
+                            tenantList.map((v, index) => (
+                                <Tenant
                                     key={index} 
                                     usage_status={v.usage_status}
                                     relationship={v.relationship}
-                                    related_tenent={v.related_tenent}
+                                    related_tenant={v.related_tenant}
                                     name={v.name}
                                     ssn={v.ssn}
                                     address={v.address}
@@ -342,9 +342,9 @@ class TenentList extends Component {
                                 />
                             ))
                         ) : ( */}
-                        {tenentList.length > 0 ? (
-                                tenentList.map((v, index) => (
-                                    <Tenent
+                        {tenantList.length > 0 ? (
+                                tenantList.map((v, index) => (
+                                    <Tenant
                                         key={index}
                                         {...v}
                                         onClick={() => this.toggleViewModal(true, v)}
@@ -359,15 +359,15 @@ class TenentList extends Component {
                 </Table>
                 </div>
                 {/* 등록 모달 */}
-                <AddTenentModal
+                <AddTenantModal
                     show={showAddModal}
                     handleClose={() => this.toggleAddModal(false)}
                     refreshList={this.getList}
                 />
-                <ViewTenentModal
+                <ViewTenantModal
                     show={showViewModal}
                     handleClose={() => this.toggleViewModal(false)}
-                    data={selectedTenent}
+                    data={selectedTenant}
                     refreshList={this.getList} // 목록 갱신 함수 전달
                 />
             </div>
@@ -375,4 +375,4 @@ class TenentList extends Component {
     }
 }
 
-export default TenentList;
+export default TenantList;

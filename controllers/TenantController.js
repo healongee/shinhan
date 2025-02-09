@@ -1,10 +1,10 @@
 const db = require('../lib/db');
 
-exports.searchTenent = async (req, res) => {
+exports.searchTenant = async (req, res) => {
     const { name, ssn, mobile } = req.body; // 클라이언트에서 보낸 데이터 추출
 
     // 기본 SQL 쿼리
-    let sqlQuery = "SELECT * FROM tenent WHERE 1=1";
+    let sqlQuery = "SELECT * FROM tenant WHERE 1=1";
     const queryParams = [];
 
     // 조건에 따라 쿼리와 파라미터 동적 생성
@@ -32,12 +32,12 @@ exports.searchTenent = async (req, res) => {
     });
 };
 
-exports.getTenentList = async (req, res) => {
-    const sqlQuery = `SELECT * FROM tenent`;
+exports.getTenantList = async (req, res) => {
+    const sqlQuery = `SELECT * FROM tenant`;
     
     db.query(sqlQuery, (err, results) => {
         if (err) {
-            console.error("Error fetching tenent data:", err);
+            console.error("Error fetching tenant data:", err);
             res.status(500).send("Error retrieving data from the database");
         } else {
             res.json(results); // 데이터를 JSON 형식으로 반환
@@ -45,12 +45,12 @@ exports.getTenentList = async (req, res) => {
     });
 };
 
-exports.addTenent = async (req, res) => {
+exports.addTenant = async (req, res) => {
     const {
         name,
         usage_status = "사용", // 기본값 "사용"
         relationship,
-        related_tenent,
+        related_tenant,
         ssn,
         address,
         mobile,
@@ -66,8 +66,8 @@ exports.addTenent = async (req, res) => {
 
     // SQL 쿼리 작성
     const sqlQuery = `
-        INSERT INTO tenent (
-            usage_status,name,relationship,related_tenent,ssn,address,mobile,email,remarks,registered_by
+        INSERT INTO tenant (
+            usage_status,name,relationship,related_tenant,ssn,address,mobile,email,remarks,registered_by
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
@@ -75,7 +75,7 @@ exports.addTenent = async (req, res) => {
         usage_status,
         name,
         relationship || null,
-        related_tenent || null,
+        related_tenant || null,
         ssn || null,
         address || null,
         mobile,
@@ -87,7 +87,7 @@ exports.addTenent = async (req, res) => {
     // 데이터베이스에 삽입
     db.query(sqlQuery, queryParams, (err, result) => {
         if (err) {
-            console.error("Error inserting tenent data:", err);
+            console.error("Error inserting tenant data:", err);
             res.status(500).send("임차인 데이터를 삽입 중 오류가 발생했습니다.");
         } else {
             res.status(201).send("임차인이 성공적으로 등록되었습니다.");
@@ -95,15 +95,15 @@ exports.addTenent = async (req, res) => {
     });
 };
 
-exports.deleteTenent = async (req, res) => {
+exports.deleteTenant = async (req, res) => {
     const { id } = req.body; // 클라이언트에서 전송된 id
 
     if (!id) {
-        return res.status(400).json({ success: false, message: "tenent_id is required" });
+        return res.status(400).json({ success: false, message: "tenant_id is required" });
     }
 
     try {
-        const [result] = await db.promise().query("DELETE FROM tenent WHERE tenent_id = ?", [id]);
+        const [result] = await db.promise().query("DELETE FROM tenant WHERE tenant_id = ?", [id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ success: false, message: "해당 임차인이 없습니다." });

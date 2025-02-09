@@ -11,7 +11,7 @@ const bcrypt = require('bcrypt');
 const { start } = require('repl');
 
 const LessorController = require("./controllers/LessorController"); // 추가
-const TenentController = require("./controllers/TenentController"); // 추가
+const TenantController = require("./controllers/TenantController"); // 추가
 const HouseController = require("./controllers/HouseController"); // 추가
 const LeaseContractController = require("./controllers/LeaseContractController");
 
@@ -125,10 +125,10 @@ app.post("/searchLessor", LessorController.searchLessor);
 app.post("/addLessor", LessorController.addLessor);
 app.delete("/deleteLessor", LessorController.deleteLessor);
 
-app.get("/Tenentlist", TenentController.getTenentList);
-app.post("/searchTenent", TenentController.searchTenent);
-app.post("/addTenent", TenentController.addTenent);
-app.delete("/deleteTenent", TenentController.deleteTenent);
+app.get("/Tenantlist", TenantController.getTenantList);
+app.post("/searchTenant", TenantController.searchTenant);
+app.post("/addTenant", TenantController.addTenant);
+app.delete("/deleteTenant", TenantController.deleteTenant);
 
 app.post("/searchHouse", HouseController.searchHouse);
 app.get("/HouseInfo", HouseController.getHouseInfo);

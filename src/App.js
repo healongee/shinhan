@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import LessorList from './LessorList';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import TenentList from './TenentList';
-import HouseInfo from './HouseInfo';
+import TenantList from './TenantList';
+import HouseInfo from './Houseinfo';
 import LeaseContract from './LeaseContract';
 import LeaseStatement from './LeaseStatement';
 import HouseinfoDetail from "./HouseinfoDetail";  // 추가
@@ -143,8 +143,8 @@ function App() {
     if (menu === "LessorList") {
       return <LessorList />;
     }
-    if (menu === "TenentList") {
-      return <TenentList />;
+    if (menu === "TenantList") {
+      return <TenantList />;
     }
     if (menu === "HouseInfo") {
       return <HouseInfo />;
@@ -172,7 +172,7 @@ function App() {
           <div className="navbar">
             <ul>
               <li onClick={() => setMenu("LessorList")}>임대인정보</li>
-              <li onClick={() => setMenu("TenentList")}>임차인정보</li>
+              <li onClick={() => setMenu("TenantList")}>임차인정보</li>
               <li onClick={() => setMenu("HouseInfo")}>주택정보</li>
               <li onClick={() => setMenu("LeaseContract")}>임대차계약</li>
               <li onClick={() => setMenu("LeaseStatement")}>임대료청구</li>

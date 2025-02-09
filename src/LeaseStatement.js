@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 const Statement = ({ contract_number, contract_status, house_address, billing_deadline, contract_date, 
-    lease_period_start, lease_period_end, tenent_name, tenent_mobile, deposit, monthly_rent, shared_cost, 
+    lease_period_start, lease_period_end, tenant_name, tenant_mobile, deposit, monthly_rent, shared_cost, 
     down_payment, interim_payment_amount, final_payment, prepaid_rent, account_book_deposit,
     account_book_deposit_notpaid, account_book_address}) => {
     return (
@@ -17,8 +17,8 @@ const Statement = ({ contract_number, contract_status, house_address, billing_de
             <td>{billing_deadline}</td>
             <td>{contract_date}</td>
             <td>{lease_period_start} ~ {lease_period_end}</td>
-            <td>{tenent_name}</td>
-            <td>{tenent_mobile}</td>
+            <td>{tenant_name}</td>
+            <td>{tenant_mobile}</td>
             <td>{deposit}</td>
             <td>{monthly_rent}</td>
             <td>{shared_cost}</td>
@@ -43,7 +43,7 @@ class LeaseStatement extends Component {
         address: '',
         unit_number: '',
         lessor_id: '',
-        tenent_id: '',
+        tenant_id: '',
     };
 
     getList = () => {
@@ -58,8 +58,8 @@ class LeaseStatement extends Component {
     };
 
     searchLeaseStatement = () => {
-        const { selected_date, start_date, end_date, house_id, lot_number, tenent_id, contract_status, billing_deadline } = this.state;
-        Axios.post("http://localhost:3001/searchLeaseStatement", { selected_date, start_date, end_date, house_id, lot_number, tenent_id, contract_status, billing_deadline })
+        const { selected_date, start_date, end_date, house_id, lot_number, tenant_id, contract_status, billing_deadline } = this.state;
+        Axios.post("http://localhost:3001/searchLeaseStatement", { selected_date, start_date, end_date, house_id, lot_number, tenant_id, contract_status, billing_deadline })
             .then((response) => {
                 console.log("Received:", response.data);
                 this.setState({ statementList: response.data });
@@ -79,7 +79,7 @@ class LeaseStatement extends Component {
     }
 
     render() {
-        const { statementList, selected_date, house_id, lot_number, tenent_id, contract_status, billing_deadline } = this.state;
+        const { statementList, selected_date, house_id, lot_number, tenant_id, contract_status, billing_deadline } = this.state;
 
         return (
             <div>
@@ -152,8 +152,8 @@ class LeaseStatement extends Component {
                             <Form.Label>임차인</Form.Label>
                             <Form.Control
                                 type="text"
-                                name="tenent_id"
-                                value={tenent_id}
+                                name="tenant_id"
+                                value={tenant_id}
                                 onChange={this.handleInputChange}
                             />
                         </Form.Group>

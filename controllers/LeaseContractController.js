@@ -2,7 +2,7 @@ const db = require('../lib/db');
 
 // 계약 검색
 exports.searchLeaseContract = (req, res) => {
-    const {selected_date, start_date, end_date, house_id, lot_number, tenent_id, contract_status, billing_deadline} = req.body;
+    const {selected_date, start_date, end_date, house_id, lot_number, tenant_id, contract_status, billing_deadline} = req.body;
 
     let sqlQuery = `
       SELECT 
@@ -10,13 +10,13 @@ exports.searchLeaseContract = (req, res) => {
         DATE_FORMAT(lc.contract_date, '%Y-%m-%d') AS contract_date,
         DATE_FORMAT(lc.lease_period_start, '%Y-%m-%d') AS lease_period_start, 
         DATE_FORMAT(lc.lease_period_end, '%Y-%m-%d') AS lease_period_end, 
-        te.name AS tenent_name, te.mobile AS tenent_mobile,
+        te.name AS tenant_name, te.mobile AS tenant_mobile,
         FORMAT(lc.deposit, 0) AS deposit, FORMAT(lc.monthly_rent, 0) AS monthly_rent,
         FORMAT(lc.shared_cost, 0) AS shared_cost, FORMAT(lc.down_payment, 0) AS down_payment, 
         FORMAT(lc.interim_payment, 0) AS interim_payment, FORMAT(lc.prepaid_rent, 0) AS prepaid_rent, 
         lc.deposit as fromOther, lc.deposit as fromOther1, lc.contract_form AS fromOther2
     FROM LeaseContract lc
-    JOIN Tenent te ON lc.tenent_id = te.tenent_id
+    JOIN Tenant te ON lc.tenant_id = te.tenant_id
     JOIN HouseInfo h ON lc.house_id = h.house_id
       WHERE 1=1
     `;
@@ -30,9 +30,9 @@ exports.searchLeaseContract = (req, res) => {
         sqlQuery += " AND lc.contract_status LIKE ?";
         queryParams.push(`%${contract_status}%`);
     }
-    if (tenent_id) {
+    if (tenant_id) {
         sqlQuery += " AND te.name LIKE ?";
-        queryParams.push(`%${tenent_id}%`);
+        queryParams.push(`%${tenant_id}%`);
     }
     if (house_id) {
         sqlQuery += " AND h.address LIKE ?";
@@ -65,13 +65,13 @@ exports.getLeaseContracts = (req, res) => {
         DATE_FORMAT(lc.contract_date, '%Y-%m-%d') AS contract_date,
         DATE_FORMAT(lc.lease_period_start, '%Y-%m-%d') AS lease_period_start, 
         DATE_FORMAT(lc.lease_period_end, '%Y-%m-%d') AS lease_period_end, 
-        te.name AS tenent_name, te.mobile AS tenent_mobile,
+        te.name AS tenant_name, te.mobile AS tenant_mobile,
         FORMAT(lc.deposit, 0) AS deposit, FORMAT(lc.monthly_rent, 0) AS monthly_rent,
         FORMAT(lc.shared_cost, 0) AS shared_cost, FORMAT(lc.down_payment, 0) AS down_payment, 
         FORMAT(lc.interim_payment, 0) AS interim_payment, FORMAT(lc.prepaid_rent, 0) AS prepaid_rent, 
         lc.deposit as fromOther, lc.deposit as fromOther1, h.address AS fromOther2
     FROM LeaseContract lc
-    JOIN Tenent te ON lc.tenent_id = te.tenent_id
+    JOIN Tenant te ON lc.tenant_id = te.tenant_id
     JOIN HouseInfo h ON lc.house_id = h.house_id;
     `;
     
