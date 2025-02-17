@@ -5,30 +5,33 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
-const Statement = ({ contract_number, contract_status, house_address, billing_deadline, contract_date, 
-    lease_period_start, lease_period_end, tenant_name, tenant_mobile, deposit, monthly_rent, shared_cost, 
-    down_payment, interim_payment_amount, final_payment, prepaid_rent, account_book_deposit,
-    account_book_deposit_notpaid, account_book_address}) => {
+const Statement = ({ statement_number, statement_sequence, account_date, account_cashbook, account_item, 
+    substance, deposit_amount, withdrawal_amount, receiver, confirm_date, director, remarks, category,
+    address, contract_number, etc, closing_number, registration_date, registered_by, modificatoin_date,
+    modificated_by}) => {
     return (
         <tr>
+            <td>{statement_number}</td>
+            <td>{statement_sequence}</td>
+            <td>{account_date}</td>
+            <td>{account_cashbook}</td>
+            <td>{account_item}</td>
+            <td>{substance}</td>
+            <td>{deposit_amount}</td>
+            <td>{withdrawal_amount}</td>
+            <td>{receiver}</td>
+            <td>{confirm_date}</td>
+            <td>{director}</td>
+            <td>{remarks}</td>
+            <td>{category}</td>
+            <td>{address}</td>
             <td>{contract_number}</td>
-            <td>{contract_status}</td>
-            <td>{house_address}</td>
-            <td>{billing_deadline}</td>
-            <td>{contract_date}</td>
-            <td>{lease_period_start} ~ {lease_period_end}</td>
-            <td>{tenant_name}</td>
-            <td>{tenant_mobile}</td>
-            <td>{deposit}</td>
-            <td>{monthly_rent}</td>
-            <td>{shared_cost}</td>
-            <td>{down_payment}</td>
-            <td>{interim_payment_amount}</td>
-            <td>{final_payment}</td>
-            <td>{prepaid_rent}</td>
-            <td>{account_book_deposit}</td>
-            <td>{account_book_deposit_notpaid}</td>
-            <td>{account_book_address}</td>
+            <td>{etc}</td>
+            <td>{closing_number}</td>
+            <td>{registration_date}</td>
+            <td>{registered_by}</td>
+            <td>{modificatoin_date}</td>
+            <td>{modificated_by}</td>
         </tr>
     );
 };
@@ -197,24 +200,26 @@ class LeaseStatement extends Component {
                     <Table striped bordered hover>
                     <thead>
                             <tr>
-                                <th>계약서 번호</th>
-                                <th>계약상태</th>
+                                <th>출납번호</th>
+                                <th>출납상세순번</th>
+                                <th>출납일자</th>
+                                <th>출납계정</th>
+                                <th>출납항목</th>
+                                <th>내용</th>
+                                <th>입금액</th>
+                                <th>출금액</th>
+                                <th>보낸(받는)사람</th>
+                                <th>확인일자</th>
+                                <th>담당자</th>
+                                <th>비고</th>
                                 <th>주소</th>
-                                <th>마감기준일</th>
-                                <th>계약일자</th>
-                                <th>계약기간</th>
-                                <th>임차인</th>
-                                <th>전화번호</th>
-                                <th>보증금</th>
-                                <th>임대료</th>
-                                <th>공용비</th>
-                                <th>계약금</th>
-                                <th>중도금</th>
-                                <th>잔금</th>
-                                <th>선불임대료</th>
-                                <th>보증금</th>
-                                <th>보증금미납</th>
-                                <th>주소</th>
+                                <th>계약서번호</th>
+                                <th>참조</th>
+                                <th>마감번호</th>
+                                <th>등록일시</th>
+                                <th>등록인</th>
+                                <th>수정일시</th>
+                                <th>수정인</th>
                             </tr>
                         </thead>
                         <tbody>
