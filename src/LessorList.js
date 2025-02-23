@@ -7,23 +7,6 @@ import Modal from "react-bootstrap/Modal";
 import "./LessorList.css"; // CSS 파일을 불러옵니다.
 import React from "react";
 
-//Lessor 컴포넌트 정의
-// const Lessor = ({ usage_status, relationship, related_lessor, is_business_owner, name, ssn, address, mobile, email, remarks }) => {
-//     return (
-//         <tr>
-//             <td>{usage_status}</td>
-//             <td>{relationship}</td>
-//             <td>{related_lessor}</td>
-//             <td>{is_business_owner}</td> 
-//             <td>{name}</td>
-//             <td>{ssn}</td>
-//             <td>{address}</td>
-//             <td>{mobile}</td>
-//             <td>{email}</td>
-//             <td>{remarks}</td>
-//         </tr>
-//     );
-// };
 const Lessor = ({ usage_status, relationship, related_lessor, is_business_owner, name, ssn, address, mobile, email, remarks, onClick }) => {
     return (
         <tr onClick={onClick} style={{ cursor: "pointer" }}>
@@ -114,9 +97,8 @@ const AddLessorModal = ({ show, handleClose, refreshList }) => {
         const dataToSubmit = {
             ...formData,
             relation: formData.relation || "본인",
-            relatedLessor: formData.relatedLessor || formData.name,
+            related_Lessor: formData.relatedLessor || formData.name,
         };
-
         try {
             const response = await Axios.post("http://localhost:3001/addLessor", dataToSubmit);
             if (response.data) {
@@ -246,7 +228,6 @@ class LessorList extends Component {
         ssn: "",
         mobile: "",
         showAddModal: false, // 등록 모달 상태
-
         showViewModal: false, // 보기 모달 상태
         selectedLessor: null // 선택된 임대인 데이터
     };
@@ -297,7 +278,6 @@ class LessorList extends Component {
     }
 
     render() {
-//        const { lessorList, name, ssn, mobile, showAddModal } = this.state;
         const { lessorList, name, ssn, mobile, showAddModal, showViewModal, selectedLessor } = this.state;
 
         return (
@@ -355,25 +335,7 @@ class LessorList extends Component {
                             <th>비고</th>
                         </tr>
                     </thead>
-
-                    <tbody>
-                        {/* {lessorList.length > 0 ? (
-                            lessorList.map((v, index) => (
-                                <Lessor 
-                                    key={index} 
-                                    usage_status={v.usage_status}
-                                    relationship={v.relationship}
-                                    related_lessor={v.related_lessor}
-                                    is_business_owner={v.is_business_owner} 
-                                    name={v.name}
-                                    ssn={v.ssn}
-                                    address={v.address}
-                                    mobile={v.mobile}
-                                    email={v.email}
-                                    remarks={v.remarks}
-                                />
-                            ))
-                        ) : ( */}
+                    <tbody>                        
                             {lessorList.length > 0 ? (
                                 lessorList.map((v, index) => (
                                     <Lessor
@@ -383,7 +345,6 @@ class LessorList extends Component {
                                     />
                                 ))
                             ) : (
-
                             <tr>
                                 <td colSpan="10">데이터가 없습니다.</td>
                             </tr>

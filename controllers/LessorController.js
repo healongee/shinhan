@@ -50,8 +50,8 @@ exports.addLessor = async (req, res) => {
         name,
         usage_status = "사용", // 기본값 "사용"
         is_business_owner = "N", // 기본값 "N"
-        relationship,
-        related_lessor,
+        relation,
+        relatedLessor,
         ssn,
         address,
         mobile,
@@ -77,8 +77,8 @@ exports.addLessor = async (req, res) => {
         usage_status,
         name,
         finalIsBusinessOwner,
-        relationship || null,
-        related_lessor || null,
+        relation || null,
+        relatedLessor || null,
         ssn || null,
         address || null,
         mobile,
@@ -119,7 +119,7 @@ exports.deleteLessor = async (req, res) => {
     }
 };
 
-exports.searchLessorByName = (req, res) => { //houseinfoDetail에서 사용하는것임
+exports.searchLessorByName = (req, res) => { //houseinfoDetail에서 사용하는것임 
     const { name } = req.body;
     
     if (!name) {
