@@ -135,6 +135,7 @@ app.get("/HouseInfo", HouseController.getHouseInfo);
 app.get("/house/:houseId", HouseController.getHouseById);
 app.post("/house", HouseController.addHouse);
 app.delete("/house/:house_id", HouseController.deleteHouse);
+app.post("/searchLessorByName", LessorController.searchLessorByName);
 
 app.post("/searchLeaseContract", LeaseContractController.searchLeaseContract);
 app.get("/LeaseContract", LeaseContractController.getLeaseContracts);

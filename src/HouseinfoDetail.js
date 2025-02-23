@@ -3,13 +3,17 @@ import { useParams, useNavigate } from "react-router-dom";
 import Axios from "axios";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
-import "./HouseinfoDetail.css"; // CSS 파일 추가
+import Modal from "react-bootstrap/Modal"; // 모달 추가
+import "./HouseinfoDetail.css"; 
 
 const HouseinfoDetail = () => {
     const { house_id } = useParams();
     const navigate = useNavigate();
     const [house, setHouse] = useState(null);
-    const [formData, setFormData] = useState({}); // 입력값 저장
+    const [formData, setFormData] = useState({}); 
+    const [showModal, setShowModal] = useState(false); // 모달 상태 추가
+    const [lessorSearch, setLessorSearch] = useState(""); // 검색 입력값
+    const [lessorList, setLessorList] = useState([]);
 
     const columnMapping = {
         usage_status: "사용여부",
@@ -31,7 +35,7 @@ const HouseinfoDetail = () => {
         building_structure: "건물구조",
         remarks: "비고",
         address: "주소",
-        old_address: "(구)주소", // 추가됨
+        old_address: "(구)주소",
         water_meter_date: "수도검침일",
         water_payment_type: "수도요금 납부구분",
         water_billing_month: "수도요금 청구월",
@@ -48,7 +52,7 @@ const HouseinfoDetail = () => {
     const hiddenColumns = ["house_id", "registration_date", "registered_by", "modification_date", "modified_by", "lessor_id"];
 
     useEffect(() => {
-        if (house_id !== "new") { // house_id가 "new"가 아닐 때만 데이터 불러옴
+        if (house_id !== "new") {
             Axios.get(`http://localhost:3001/house/${house_id}`)
                 .then((response) => {
                     setHouse(response.data);
@@ -58,11 +62,10 @@ const HouseinfoDetail = () => {
                     console.error("Error fetching house details:", error);
                 });
         } else {
-            setFormData({}); // 빈 데이터로 설정
+            setFormData({});
         }
     }, [house_id]);    
     
-    // 입력값 변경 핸들러
     const handleChange = (e, key) => {
         setFormData({
             ...formData,
@@ -70,26 +73,45 @@ const HouseinfoDetail = () => {
         });
     };
 
+    const handleLessorSearch = () => {
+        Axios.post("http://localhost:3001/searchLessorByName", { name: lessorSearch })
+            .then((response) => {
+                setLessorList(response.data.lessors);
+            })
+            .catch((error) => {
+                console.error("Error searching lessor:", error);
+            });
+    };
+
+    // const selectLessor = (lessor) => {
+    //     setFormData({ ...formData, lessor_name: lessor.name });
+    //     setShowModal(false);
+    // };
+
+    const selectLessor = (lessor) => {
+        setFormData({ 
+            ...formData, 
+            lessor_id: lessor.id || lessor.lessor_id, // 필드명이 다를 가능성 대비
+            lessor_name: lessor.name // UI에서 보여주기 위한 값 유지
+        });
+        setShowModal(false);
+    };    
+
     const openAddressSearch = () => {
         new window.daum.Postcode({
             oncomplete: (data) => {
-                let jibunAddress = data.jibunAddress; // 기본 지번 주소
-                if (!jibunAddress) {
-                    // 지번 주소가 제공되지 않으면 bname(법정동) + buildingName으로 보완
-                    jibunAddress = `${data.bname} ${data.buildingName || ""}`.trim();
-                }                
+                let jibunAddress = data.jibunAddress || `${data.bname} ${data.buildingName || ""}`.trim();
                 setFormData({
                     ...formData,
-                    address: data.roadAddress, // 도로명 주소
-                    old_address: jibunAddress, // (구)주소 (지번 주소)
-                    postal_code: data.zonecode, // 우편번호                    
+                    address: data.roadAddress,
+                    old_address: jibunAddress,
+                    postal_code: data.zonecode,
                 });
             }
         }).open();
     };    
 
     useEffect(() => {
-        // 카카오 주소 API 스크립트 추가
         const script = document.createElement("script");
         script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
         script.async = true;
@@ -103,10 +125,11 @@ const HouseinfoDetail = () => {
     const filteredEntries = Object.entries(formData).filter(([key]) => !hiddenColumns.includes(key));
 
     const handleRegister = () => {
+        console.log("등록 데이터:", formData); // 디버깅용 콘솔 로그
         Axios.post("http://localhost:3001/house", formData)
             .then(() => {
                 alert("등록이 완료되었습니다!");
-                navigate(-1); // 등록 후 이전 페이지로 이동
+                navigate(-1);
             })
             .catch((error) => {
                 console.error("Error registering house:", error);
@@ -119,7 +142,7 @@ const HouseinfoDetail = () => {
             Axios.delete(`http://localhost:3001/house/${house_id}`)
                 .then(() => {
                     alert("삭제가 완료되었습니다.");
-                    navigate(-1); // 목록으로 이동
+                    navigate(-1);
                 })
                 .catch((error) => {
                     console.error("Error deleting house:", error);
@@ -147,14 +170,13 @@ const HouseinfoDetail = () => {
                                         onClick={openAddressSearch}
                                         style={{ cursor: "pointer", backgroundColor: "#f0f0f0" }}
                                     />
-                                ) : key === "old_address" ? (
-                                    <input 
-                                        type="text" 
-                                        className="table-input"
-                                        value={value || ""}
-                                        readOnly
-                                        style={{ backgroundColor: "#f0f0f0" }}
-                                    />
+                                ) : key === "lessor_name" ? (
+                                    <span 
+                                        onClick={() => setShowModal(true)} 
+                                        style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
+                                    >
+                                        {value || "임대인 선택"}
+                                    </span>
                                 ) : (
                                     <input 
                                         type="text" 
@@ -176,15 +198,45 @@ const HouseinfoDetail = () => {
                     목록
                 </Button>
                 <Button className="register-button" variant="success" onClick={handleRegister}>
-                    수정
+                    등록
                 </Button>
                 <Button className="delete-button" variant="danger" onClick={handleDelete}>
                     삭제
                 </Button>
             </div>
+
+            {/* 모달 */}
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>임대인 검색</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <input 
+                        type="text" 
+                        className="table-input"
+                        value={lessorSearch} 
+                        onChange={(e) => setLessorSearch(e.target.value)} 
+                        placeholder="임대인 이름 입력"
+                    />
+                    <Button variant="primary" onClick={handleLessorSearch}>
+                        검색
+                    </Button>
+                    <ul>
+                        {lessorList.map((lessor) => (
+                            <li key={lessor.id} onClick={() => selectLessor(lessor)}>
+                                {lessor.name}/{lessor.mobile}/{lessor.address}
+                            </li>
+                        ))}
+                    </ul>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        닫기
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 };
 
 export default HouseinfoDetail;
-

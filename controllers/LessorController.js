@@ -118,3 +118,21 @@ exports.deleteLessor = async (req, res) => {
         res.status(500).json({ success: false, message: "삭제 실패" });
     }
 };
+
+exports.searchLessorByName = (req, res) => { //houseinfoDetail에서 사용하는것임
+    const { name } = req.body;
+    
+    if (!name) {
+        return res.status(400).json({ success: false, message: "이름을 입력하세요." });
+    }
+
+    const query = "SELECT * FROM lessor WHERE name LIKE ?";
+    db.query(query, [`%${name}%`], (error, results) => {
+        if (error) {
+            console.error("Lessor search error:", error);
+            return res.status(500).json({ success: false, message: "서버 오류 발생." });
+        }
+
+        res.status(200).json({ success: true, lessors: results });
+    });
+};

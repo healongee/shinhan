@@ -92,7 +92,7 @@ exports.addHouse = (req, res) => {
         water_meter_date, water_payment_type, water_billing_month,
         electricity_meter_date, electricity_payment_type,
         gas_meter_date, gas_payment_type, other_fee,
-        cable_fee, internet_fee, old_address, old_postal_code
+        cable_fee, internet_fee, old_address, old_postal_code, lessor_id
     } = req.body;
 
     const sql = `
@@ -104,8 +104,8 @@ exports.addHouse = (req, res) => {
             water_meter_date, water_payment_type, water_billing_month,
             electricity_meter_date, electricity_payment_type,
             gas_meter_date, gas_payment_type, other_fee,
-            cable_fee, internet_fee, old_address, old_postal_code
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            cable_fee, internet_fee, old_address, old_postal_code, lessor_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const values = [
         usage_status, management_status, billing_deadline, vat,
@@ -115,7 +115,7 @@ exports.addHouse = (req, res) => {
         water_meter_date, water_payment_type, water_billing_month,
         electricity_meter_date, electricity_payment_type,
         gas_meter_date, gas_payment_type, other_fee,
-        cable_fee, internet_fee, old_address, old_postal_code
+        cable_fee, internet_fee, old_address, old_postal_code, lessor_id
     ];
 
     db.query(sql, values, (err, result) => {
