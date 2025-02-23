@@ -49,8 +49,8 @@ exports.addTenant = async (req, res) => {
     const {
         name,
         usage_status = "사용", // 기본값 "사용"
-        relationship,
-        related_tenant,
+        relation,
+        relatedTenant,
         ssn,
         address,
         mobile,
@@ -74,8 +74,8 @@ exports.addTenant = async (req, res) => {
     const queryParams = [
         usage_status,
         name,
-        relationship || null,
-        related_tenant || null,
+        relation || null,
+        relatedTenant || null,
         ssn || null,
         address || null,
         mobile,
