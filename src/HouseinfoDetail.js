@@ -62,7 +62,13 @@ const HouseinfoDetail = () => {
                     console.error("Error fetching house details:", error);
                 });
         } else {
-            setFormData({});
+            // 모든 필드를 빈 문자열로 초기화
+            const emptyFormData = Object.keys(columnMapping).reduce((acc, key) => {
+                acc[key] = "";
+                return acc;
+            }, {});
+            setHouse(emptyFormData);
+            setFormData(emptyFormData);
         }
     }, [house_id]);    
     
@@ -118,7 +124,7 @@ const HouseinfoDetail = () => {
         document.body.appendChild(script);
     }, []);
 
-    if (!house) {
+    if (house === null) {
         return <div>로딩 중...</div>;
     }
 
@@ -200,9 +206,11 @@ const HouseinfoDetail = () => {
                 <Button className="register-button" variant="success" onClick={handleRegister}>
                     등록
                 </Button>
-                <Button className="delete-button" variant="danger" onClick={handleDelete}>
-                    삭제
-                </Button>
+                {house_id !== "new" && (
+                    <Button className="delete-button" variant="danger" onClick={handleDelete}>
+                        삭제
+                    </Button>
+                )}
             </div>
 
             {/* 모달 */}

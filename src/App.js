@@ -9,6 +9,7 @@ import LeaseContract from './LeaseContract';
 import LeaseStatement from './LeaseStatement';
 import HouseinfoDetail from "./HouseinfoDetail";  // 추가
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 function Login(props) {
   const [id, setId] = useState("");
@@ -106,6 +107,53 @@ function Signin(props) {
   </> 
 }
 
+function MainContent({ mode, setMode, menu, setMenu, handleLogout }) {
+  const navigate = useNavigate();
+
+  const renderContent = () => {
+    if (menu === "LessorList") {
+      return <LessorList />;
+    }
+    if (menu === "TenantList") {
+      return <TenantList />;
+    }
+    if (menu === "HouseInfo") {
+      return <HouseInfo navigate={navigate} />;
+    }
+    if (menu === "LeaseContract") {
+      return <LeaseContract />;
+    } 
+    if (menu === "LeaseStatement") {
+      return <LeaseStatement />;
+    } 
+    return <div>준비 중입니다...</div>;
+  };
+
+  return (
+    <div className="App">
+      <div className="navbar">
+        <ul>
+          <li onClick={() => setMenu("LessorList")}>임대인정보</li>
+          <li onClick={() => setMenu("TenantList")}>임차인정보</li>
+          <li onClick={() => setMenu("HouseInfo")}>주택정보</li>
+          <li onClick={() => setMenu("LeaseContract")}>임대차계약</li>
+          <li onClick={() => setMenu("LeaseStatement")}>임대료청구</li>
+          <li>이주정산</li>
+          <li>금전출납</li>
+          <li>시스템</li>
+          <li onClick={handleLogout}>로그아웃</li>
+        </ul>
+      </div>
+      <div className="content">
+        <Routes>
+          <Route path="/" element={renderContent()} />
+          <Route path="/house/:house_id" element={<HouseinfoDetail />} />
+        </Routes>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [mode, setMode] = useState("");
   const [menu, setMenu] = useState("LessorList");
@@ -125,38 +173,18 @@ function App() {
   function handleLogout() {
     fetch('/logout', {
         method: 'GET',
-        credentials: 'include', // 세션 쿠키를 포함
+        credentials: 'include',
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            window.location.href = '/'; // 홈 페이지로 리다이렉트
+            window.location.href = '/';
         } else {
             alert('Logout failed: ' + data.message);
         }
     })
     .catch(err => console.error('Logout error:', err));
-}
-  
-
-  const renderContent = () => {
-    if (menu === "LessorList") {
-      return <LessorList />;
-    }
-    if (menu === "TenantList") {
-      return <TenantList />;
-    }
-    if (menu === "HouseInfo") {
-      return <HouseInfo />;
-    }
-    if (menu === "LeaseContract") {
-      return <LeaseContract />;
-    } 
-    if (menu === "LeaseStatement") {
-      return <LeaseStatement />;
-    } 
-    return <div>준비 중입니다...</div>;
-  };
+  }
 
   let content = null;  
 
@@ -166,33 +194,14 @@ function App() {
     content = <Signin setMode={setMode} />;
   } else if (mode === "WELCOME") {
     content = (
-      //<>
       <Router>
-        <div className="App">
-          <div className="navbar">
-            <ul>
-              <li onClick={() => setMenu("LessorList")}>임대인정보</li>
-              <li onClick={() => setMenu("TenantList")}>임차인정보</li>
-              <li onClick={() => setMenu("HouseInfo")}>주택정보</li>
-              <li onClick={() => setMenu("LeaseContract")}>임대차계약</li>
-              <li onClick={() => setMenu("LeaseStatement")}>임대료청구</li>
-              <li>이주정산</li>
-              <li>금전출납</li>
-              <li>시스템</li>
-              <li onClick={handleLogout}>로그아웃</li>
-            </ul>
-          </div>
-          {/* <div className="content">
-            {renderContent()}
-          </div> */}
-          <div className="content">
-            <Routes>
-              <Route path="/" element={renderContent()} />
-              <Route path="/house/:house_id" element={<HouseinfoDetail />} />
-            </Routes>
-          </div>
-        </div>
-      {/* </> */}
+        <MainContent 
+          mode={mode} 
+          setMode={setMode} 
+          menu={menu} 
+          setMenu={setMenu} 
+          handleLogout={handleLogout}
+        />
       </Router>
     );
   }

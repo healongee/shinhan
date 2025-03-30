@@ -17,7 +17,7 @@ const House = ({ house_id, usage_status, management_status, billing_deadline, va
     const handleRowClick = () => {
         navigate(`/house/${house_id}`); // house_id를 URL 파라미터로 전달
     };
-
+    
     return (
         <tr onClick={handleRowClick} style={{ cursor: "pointer" }}>
             <td>{usage_status}</td>
@@ -107,6 +107,7 @@ class HouseInfo extends Component {
                 <div className="button-group">
                     <Button variant="info" onClick={this.searchHouse}>검색</Button>
                     <Button variant="secondary" onClick={this.getList}>초기화</Button>
+                    <Button variant="success" onClick={this.handleRegisterClick}>등록</Button>
                 </div>
                 <Form>
                     <div className="form-row">
