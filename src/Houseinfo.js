@@ -201,6 +201,16 @@ class HouseInfo extends Component {
                                 <th>건물구조</th>
                                 <th>건물용도</th>
                                 <th>비고</th>
+                                <th>수도검침일</th>
+                                <th>수도요금 납부구분</th>
+                                <th>수도요금 청구월</th>
+                                <th>전기검침일</th>
+                                <th>전기요금 납부구분</th>
+                                <th>가스검침일</th>
+                                <th>가스요금 납부구분</th>
+                                <th>기타요금</th>
+                                <th>케이블요금</th>
+                                <th>인터넷요금</th>
                             </tr>
                         </thead>
                         <tbody>
