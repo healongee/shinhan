@@ -5,6 +5,7 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal"; // 모달 추가
 import "./HouseinfoDetail.css"; 
+import { useMemo } from "react";
 
 const HouseinfoDetail = () => {
     const { house_id } = useParams();
@@ -15,7 +16,7 @@ const HouseinfoDetail = () => {
     const [lessorSearch, setLessorSearch] = useState(""); // 검색 입력값
     const [lessorList, setLessorList] = useState([]);
 
-    const columnMapping = {
+    const columnMapping = useMemo(() => ({
         usage_status: "사용여부",
         management_status: "관리여부",
         lessor_name: "임대인",
@@ -47,7 +48,7 @@ const HouseinfoDetail = () => {
         cable_fee: "케이블요금",
         internet_fee: "인터넷요금",
         old_postal_code: "(구)우편번호",
-    };
+    }), []); // 빈 배열을 의존성으로 전달하여 한 번만 생성
 
     const hiddenColumns = ["house_id", "registration_date", "registered_by", "modification_date", "modified_by", "lessor_id"];
 
@@ -70,7 +71,7 @@ const HouseinfoDetail = () => {
             setHouse(emptyFormData);
             setFormData(emptyFormData);
         }
-    }, [house_id]);    
+    }, [house_id, columnMapping]);    
     
     const handleChange = (e, key) => {
         setFormData({
@@ -157,6 +158,21 @@ const HouseinfoDetail = () => {
         }
     };
 
+    const handleModify = () => {
+        if (window.confirm("정말로 수정하시겠습니까?")) {
+            console.log("수정 데이터:", formData); // 디버깅용 콘솔 로그
+            Axios.put(`http://localhost:3001/house/${house_id}`, formData)
+                .then(() => {
+                    alert("수정이 완료되었습니다!");
+                    navigate(-1); // 이전 페이지로 이동
+                })
+                .catch((error) => {
+                    console.error("Error modifying house:", error);
+                    alert("수정에 실패했습니다.");
+                });
+        }
+    };
+
     return (
         <div className="house-detail-container">
             <h2>주택 상세 정보</h2>
@@ -203,9 +219,16 @@ const HouseinfoDetail = () => {
                 <Button className="back-button" onClick={() => navigate(-1)}>
                     목록
                 </Button>
-                <Button className="register-button" variant="success" onClick={handleRegister}>
-                    등록
-                </Button>
+                {house_id !== "new" && ( 
+                    <Button className="register-button" variant="success" onClick={handleModify}>
+                        수정
+                    </Button>
+                )}
+                {house_id === "new" && ( 
+                    <Button className="register-button" variant="success" onClick={handleRegister}>
+                        등록
+                    </Button>
+                )} 
                 {house_id !== "new" && (
                     <Button className="delete-button" variant="danger" onClick={handleDelete}>
                         삭제

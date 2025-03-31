@@ -141,3 +141,57 @@ exports.deleteHouse = (req, res) => {
       }
     });
 };
+
+// 주택 정보 수정 함수
+exports.modifyHouse = (req, res) => {
+    const {
+        usage_status, management_status, billing_deadline, vat,
+        town, lot_number, unit_number, building_name, postal_code,
+        land_area_m2, land_area_py, land_purpose, building_area_m2, building_area_py,
+        building_purpose, building_structure, remarks, address,
+        water_meter_date, water_payment_type, water_billing_month,
+        electricity_meter_date, electricity_payment_type,
+        gas_meter_date, gas_payment_type, other_fee,
+        cable_fee, internet_fee, old_address, old_postal_code, lessor_id
+    } = req.body;
+
+    const house_id = req.params.house_id; // URL에서 house_id 추출
+
+    const sql = `
+        UPDATE HouseInfo
+        SET 
+            usage_status = ?, management_status = ?, billing_deadline = ?, vat = ?,
+            town = ?, lot_number = ?, unit_number = ?, building_name = ?, postal_code = ?, address = ?,
+            land_area_m2 = ?, land_area_py = ?, land_purpose = ?, building_area_m2 = ?, building_area_py = ?,
+            building_purpose = ?, building_structure = ?, remarks = ?,
+            water_meter_date = ?, water_payment_type = ?, water_billing_month = ?,
+            electricity_meter_date = ?, electricity_payment_type = ?,
+            gas_meter_date = ?, gas_payment_type = ?, other_fee = ?,
+            cable_fee = ?, internet_fee = ?, old_address = ?, old_postal_code = ?, lessor_id = ?
+        WHERE house_id = ?`;
+
+    const values = [
+        usage_status, management_status, billing_deadline, vat,
+        town, lot_number, unit_number, building_name, postal_code, address,
+        land_area_m2, land_area_py, land_purpose, building_area_m2, building_area_py,
+        building_purpose, building_structure, remarks,
+        water_meter_date, water_payment_type, water_billing_month,
+        electricity_meter_date, electricity_payment_type,
+        gas_meter_date, gas_payment_type, other_fee,
+        cable_fee, internet_fee, old_address, old_postal_code, lessor_id,
+        house_id // WHERE 절에 사용할 house_id
+    ];
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error("Error updating house data:", err);
+            return res.status(500).json({ error: "Database update failed" });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "House not found" });
+        }
+
+        res.status(200).json({ message: "House updated successfully" });
+    });
+};
